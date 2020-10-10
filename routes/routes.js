@@ -21,11 +21,13 @@ router.get("/webinar/get/id/:id", WebControl.getId);
 router.get("/webinar/get/all", WebControl.getAll);
 router.get("/webinar/get/createdby/:id", WebControl.getCreatedBy);
 
-router.post("/user/create", UserControl.create);
+router.post("/register", UserControl.create);
 router.post("/user/login", UserControl.login);
 router.post("/user/isTokenValid", UserControl.validate);
-router.patch("/user/update/:id", UserControl.update);
+router.get("/users/", auth, UserControl.getToken);
 router.delete("/user/delete", auth, UserControl.delete);
+
+router.patch("/user/update/:id", UserControl.update);
 router.delete("/user/delete/:id", UserControl.delete);
 router.get("/user/get/id/:id", UserControl.getId);
 router.get("/user/get/verify/:email/:password", UserControl.verifyUser);

@@ -85,7 +85,6 @@ exports.login = async (req, res) => {
       user: {
         id: user._id,
         displayname: user.displayname,
-        email: user.email,
       },
     });
   } catch (err) {
@@ -118,6 +117,16 @@ exports.validate = async (req, res) => {
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
+};
+
+// GET USER BY TOKEN
+
+exports.getToken = async (req, res) => {
+  const user = await User.findById(req.user);
+  res.json({
+    displayname: user.displayname,
+    id: user._id,
+  });
 };
 
 // UPDATE USER
