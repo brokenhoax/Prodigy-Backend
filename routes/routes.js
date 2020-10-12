@@ -19,6 +19,7 @@ router.patch("/webinar/update/:id", WebControl.update);
 router.delete("/webinar/delete/:id", WebControl.delete);
 router.get("/webinar/get/id/:id", WebControl.getId);
 router.get("/webinar/get/all", WebControl.getAll);
+router.get("/home", WebControl.getAll);
 router.get("/webinar/get/createdby/:id", WebControl.getCreatedBy);
 
 router.post("/register", UserControl.create);
