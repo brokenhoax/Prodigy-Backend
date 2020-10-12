@@ -85,6 +85,7 @@ exports.login = async (req, res) => {
       user: {
         id: user._id,
         displayname: user.displayname,
+        favorite: user.favorite,
       },
     });
   } catch (err) {
