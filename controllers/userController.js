@@ -82,11 +82,7 @@ exports.login = async (req, res) => {
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
     res.json({
       token,
-      user: {
-        id: user._id,
-        displayname: user.displayname,
-        favorite: user.favorite,
-      },
+      user: user,
     });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -121,19 +117,19 @@ exports.validate = async (req, res) => {
 };
 
 // GET USER BY TOKEN
-
 exports.getToken = async (req, res) => {
   const user = await User.findById(req.user);
+  console.log(JSON.stringify(user));
   res.json({
-    displayname: user.displayname,
-    id: user._id,
+    token,
+    user: user,
   });
 };
 
-// UPDATE USER
-
 exports.update = async (req, res) => {
+  // console.log("howdy!");
   const { body } = req;
+  console.log(req.body);
   if (!userAuth.exists(body)) {
     return res
       .status(400)
@@ -151,55 +147,37 @@ exports.update = async (req, res) => {
       .end();
   }
 
-  db.User.findOne({ _id: req.params.id }, (err, user) => {
-    if (err) {
-      return res
-        .status(404)
-        .json({
-          err,
-          message: "User not found!",
-        })
-        .end();
+  let test;
+  db.User.findOne({ _id: req.body.id }, (err, user) => {
+    if (user.favorite.includes(req.body.favorite)) {
+      console.log("REMOVE THAT SUCKER!");
+      db.User.updateOne(
+        { _id: req.body.id },
+        { $pull: { favorite: req.body.favorite } },
+        function (error, success) {
+          if (error) {
+            console.log(error);
+          } else {
+            console.log(success);
+            return res.status(200).json({ success: true, data: User }).end();
+          }
+        }
+      );
+    } else {
+      console.log("ADD THAT SUCKER!");
+      db.User.updateOne(
+        { _id: req.body.id },
+        { $addToSet: { favorite: req.body.favorite } },
+        function (error, success) {
+          if (error) {
+            console.log(error);
+          } else {
+            console.log(success);
+            return res.status(200).json({ success: true, data: User }).end();
+          }
+        }
+      );
     }
-    if (body.email !== undefined) {
-      user.email = body.email;
-    }
-    if (body.password !== undefined) {
-      user.password = body.password;
-    }
-    if (body.favorite !== undefined) {
-      user.favorite = body.favorite;
-    }
-    if (body.registered !== undefined) {
-      user.registered = body.registered;
-    }
-    if (body.completedVideo !== undefined) {
-      user.completedVideo = body.completedVideo;
-    }
-    if (body.passedQuiz !== undefined) {
-      user.passedQuiz = body.passedQuiz;
-    }
-    user
-      .save()
-      .then(() => {
-        return res
-          .status(200)
-          .json({
-            success: true,
-            id: user._id,
-            message: "User updated!",
-          })
-          .end();
-      })
-      .catch((error) => {
-        return res
-          .status(404)
-          .json({
-            error,
-            message: "User not updated!",
-          })
-          .end();
-      });
   });
 };
 
