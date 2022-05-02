@@ -120,10 +120,13 @@ exports.validate = async (req, res) => {
 exports.getToken = async (req, res) => {
   const user = await User.findById(req.user);
   console.log(JSON.stringify(user));
-  res.json({
-    token,
-    user: user,
-  });
+  // Why does commenting this out fix CORS problem?
+  // Why do we need this function in the first place?
+  // Clear browser storage and see how the app functions
+  // res.json({
+  //   token,
+  //   user: user,
+  // });
 };
 
 exports.update = async (req, res) => {
